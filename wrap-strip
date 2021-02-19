@@ -1,0 +1,32 @@
+#!/bin/sh
+# strip command wrapper script.
+#   Copyright (C) 2018-2021 NEC Corporation
+
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, see <https://www.gnu.org/licenses/>.
+
+if [ -z "$1" ] ; then
+ exit 1
+fi
+
+VE_STRIP=/opt/nec/ve/bin/nstrip
+STD_STRIP=/usr/bin/strip
+
+MACHINE_ID="`/opt/nec/ve/bin/nreadelf -h ${@:$#}|grep Machine:|head -1`"
+IS_VE=`echo $MACHINE_ID|grep "NEC VE"`
+
+if [ $? = 0 ] ; then
+  $VE_STRIP $@
+else 
+  $STD_STRIP $@
+fi

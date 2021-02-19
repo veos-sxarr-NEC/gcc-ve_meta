@@ -1,0 +1,41 @@
+diff --git a/configure b/configure
+index 32a3863..2ed2518 100755
+--- a/configure
++++ b/configure
+@@ -6920,7 +6920,7 @@ esac
+ 
+ # Some systems (e.g., one of the i386-aix systems the gas testers are
+ # using) don't handle "\$" correctly, so don't use it here.
+-tooldir='${exec_prefix}'/${target_noncanonical}
++tooldir='${exec_prefix}'
+ build_tooldir=${tooldir}
+ 
+ # Create a .gdbinit file which runs the one in srcdir
+diff --git a/gcc/configure b/gcc/configure
+index ea73b15..47a2baf 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -23245,6 +23245,9 @@ else
+       gcc_cv_as_cfi_directive=yes
+     fi
+     ;;
++  ve-nec*-*-*)
++    gcc_cv_as_cfi_directive=no
++    ;;
+   *-*-*)
+     gcc_cv_as_cfi_directive=yes
+     ;;
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index 9d4c792..8ec0063 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -2798,6 +2798,9 @@ gcc_GAS_CHECK_FEATURE([cfi directives], gcc_cv_as_cfi_directive,
+       gcc_cv_as_cfi_directive=yes
+     fi
+     ;;
++  ve-nec*-*-*)
++    gcc_cv_as_cfi_directive=no
++    ;;
+   *-*-*)
+     gcc_cv_as_cfi_directive=yes
+     ;;
