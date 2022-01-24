@@ -1,6 +1,6 @@
 %global	pname gcc-ve
 %global gcc_version 7.1.0
-%global gcc_release 6
+%global gcc_release 7
 
 Name: %{pname}
 Version: %{gcc_version}
@@ -19,6 +19,7 @@ Summary: Various compilers proted to VE (C, C++, Objective-C, Java, ...)
 %global mandir %{prefix}/%{L_mandir}
 %global _sysconfdir /etc%{prefix}
 %global metadir ${RPM_BUILD_DIR}/%{gcc_meta}
+%global sourcedir ${RPM_BUILD_DIR}/%{gcc_source}
 
 # libgcc, libgfortran, libgomp, libstdc++ and crtstuff have
 # GCC Runtime Exception.
@@ -94,6 +95,8 @@ cp %{metadir}/glibc-gcc.specs ${RPM_BUILD_ROOT}%{prefix}/lib/gcc/%{gcc_target_pl
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/gcc
 cd ${RPM_BUILD_ROOT}%{prefix}/lib/gcc
 ln -s %{gcc_target_platform}/%{gcc_version}/libgcc.a libgcc.a
+cp %{sourcedir}/README* ${RPM_BUILD_DIR}/%{gcc_build}/
+cp %{sourcedir}/COPYING* ${RPM_BUILD_DIR}/%{gcc_build}/
 
 rm -fr ${RPM_BUILD_ROOT}%{infodir}/dir
 
@@ -208,9 +211,13 @@ fi
 
 %{_sysconfdir}/gcc
 
+%doc README README.md COPYING COPYING3 COPYING3.LIB COPYING.LIB COPYING.RUNTIME
+
 %files -n libgcc-ve-static
 %{prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libgcc.a
 %{prefix}/lib/gcc/libgcc.a
+
+%doc README README.md COPYING COPYING3 COPYING3.LIB COPYING.LIB COPYING.RUNTIME
 
 %changelog
 * Fri Jul 27 2018 NEC 7.1.0-4

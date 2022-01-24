@@ -35,6 +35,7 @@ SOURCE_SDIR=${GCC_SDIR}/gcc_source
 SPEC=${META_SDIR}/gcc.spec
 META_TAR=gcc_meta-ve-${GCC_VER}.tar.bz2
 SOURCE_TAR=gcc_source-ve-${GCC_VER}.tar.bz2
+DOCDIR=/opt/nec/ve/share/doc
 
 if [ ! -d ${META_SDIR} ];then
 	echo ${META_SDIR}" meta dir is not found" 
@@ -46,7 +47,7 @@ if [ ! -d ${SOURCE_SDIR} ];then
 	exit 1
 fi
 
-rpmbuild -D "_topdir ${RPMBUILD_TOP}" -ta hoge >/dev/null 2>&1
+mkdir -p ${RPMBUILD_TOP}/{BUILD,SOURCES,SPECS,SRPMS,RPMS}
 
 cd ${SOURCE_SDIR}
 git archive --worktree-attributes --format=tar HEAD | bzip2 > ${RPMBUILD_TOP}/SOURCES/${SOURCE_TAR}
@@ -57,5 +58,5 @@ git archive --worktree-attributes --format=tar HEAD | bzip2 > ${RPMBUILD_TOP}/SO
 cp -f ${SPEC} ${RPMBUILD_TOP}/SPECS
 
 export QA_SKIP_BUILD_ROOT=1
-rpmbuild -D "_topdir ${RPMBUILD_TOP}" -ba ${RPMBUILD_TOP}/SPECS/gcc.spec
+rpmbuild -D "_topdir ${RPMBUILD_TOP}" -D "_defaultdocdir ${DOCDIR}" -ba ${RPMBUILD_TOP}/SPECS/gcc.spec
 
