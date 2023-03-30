@@ -1,6 +1,6 @@
-%global	pname gcc-ve
+%global	pname gcc-ve1
 %global gcc_version 7.1.0
-%global gcc_release 7
+%global gcc_release 8
 
 Name: %{pname}
 Version: %{gcc_version}
@@ -49,8 +49,8 @@ Requires: readline
 Requires: zlib
 Requires: expat
 Requires: veos-libveptrace
-Requires: libgcc-ve-static = %{version}-%{release}
-
+Requires: libgcc-ve1-static = %{version}-%{release}
+Provides: gcc-ve
 %define _unpackaged_files_terminate_build 0
 %define debug_package %{nil}
 %define __strip %{metadir}/wrap-strip
@@ -61,12 +61,14 @@ The gcc package contains the GNU Compiler Collection version 7.
 You'll need this package in order to compile C code.
 This package provides GCC ported to VE
 
-%package -n libgcc-ve-static
+%package -n libgcc-ve1-static
 Summary: GCC version 7 shared support library
 Group: System Environment/Libraries
 Autoreq: false
+Obsoletes:libgcc-ve-static
+Provides:libgcc-ve-static
 
-%description -n libgcc-ve-static
+%description -n libgcc-ve1-static
 This package contains GCC shared support library which is needed
 e.g. for exception handling support.
 This package provides GCC ported to VE
@@ -213,7 +215,7 @@ fi
 
 %doc README README.md COPYING COPYING3 COPYING3.LIB COPYING.LIB COPYING.RUNTIME
 
-%files -n libgcc-ve-static
+%files -n libgcc-ve1-static
 %{prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libgcc.a
 %{prefix}/lib/gcc/libgcc.a
 
