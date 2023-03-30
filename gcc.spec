@@ -1,23 +1,24 @@
-%global	pname gcc-ve1
+%global	pname gcc-ve3
 %global gcc_version 7.1.0
-%global gcc_release 8
+%global gcc_release 9
 
 Name: %{pname}
 Version: %{gcc_version}
 Release: %{gcc_release}%{?dist}
 Summary: Various compilers proted to VE (C, C++, Objective-C, Java, ...)
 
+%global gccdir /gcc
 %global pkgdir	%{pname}-%{version}
 %global gcc_target_platform ve-nec-linux-gnu
 %global gcc_source gcc_source
 %global gcc_meta gcc_meta
 %global gcc_build build
-%global prefix /opt/nec/ve
+%global program_prefix ve-
+%global prefix /opt/nec/ve3
 %global L_infodir share/info
-%global infodir %{prefix}/%{L_infodir}
+%global infodir %{prefix}%{gccdir}/%{L_infodir}
 %global L_mandir share/man
-%global mandir %{prefix}/%{L_mandir}
-%global _sysconfdir /etc%{prefix}
+%global mandir %{prefix}%{gccdir}/%{L_mandir}
 %global metadir ${RPM_BUILD_DIR}/%{gcc_meta}
 %global sourcedir ${RPM_BUILD_DIR}/%{gcc_source}
 
@@ -49,8 +50,8 @@ Requires: readline
 Requires: zlib
 Requires: expat
 Requires: veos-libveptrace
-Requires: libgcc-ve1-static = %{version}-%{release}
-Provides: gcc-ve
+Requires: libgcc-ve3-static = %{version}-%{release}
+
 %define _unpackaged_files_terminate_build 0
 %define debug_package %{nil}
 %define __strip %{metadir}/wrap-strip
@@ -61,14 +62,12 @@ The gcc package contains the GNU Compiler Collection version 7.
 You'll need this package in order to compile C code.
 This package provides GCC ported to VE
 
-%package -n libgcc-ve1-static
+%package -n libgcc-ve3-static
 Summary: GCC version 7 shared support library
 Group: System Environment/Libraries
 Autoreq: false
-Obsoletes:libgcc-ve-static
-Provides:libgcc-ve-static
 
-%description -n libgcc-ve1-static
+%description -n libgcc-ve3-static
 This package contains GCC shared support library which is needed
 e.g. for exception handling support.
 This package provides GCC ported to VE
@@ -91,132 +90,80 @@ mkdir -p ${RPM_BUILD_ROOT}%{prefix}
 %install
 %{metadir}/config.sh -l gnu -i %{prefix}
 make %{?_smp_mflags}
-make %{?_smp_mflags} prefix=${RPM_BUILD_ROOT}%{prefix} install
+make %{?_smp_mflags} prefix=${RPM_BUILD_ROOT}%{prefix}%{gccdir} install
 
-cp %{metadir}/glibc-gcc.specs ${RPM_BUILD_ROOT}%{prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/specs
-mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/gcc
-cd ${RPM_BUILD_ROOT}%{prefix}/lib/gcc
+cp %{metadir}/glibc-gcc.specs ${RPM_BUILD_ROOT}%{prefix}%{gccdir}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/specs
+cd ${RPM_BUILD_ROOT}%{prefix}%{gccdir}/lib/gcc
 ln -s %{gcc_target_platform}/%{gcc_version}/libgcc.a libgcc.a
+mkdir -p ${RPM_BUILD_ROOT}%{prefix}/lib/gcc
+cd ${RPM_BUILD_ROOT}%{prefix}/lib/gcc
+ln -s ../../gcc/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libgcc.a libgcc.a
 cp %{sourcedir}/README* ${RPM_BUILD_DIR}/%{gcc_build}/
 cp %{sourcedir}/COPYING* ${RPM_BUILD_DIR}/%{gcc_build}/
 
 rm -fr ${RPM_BUILD_ROOT}%{infodir}/dir
 
-###
-### Workaround for search path of gcc
-###
-cd ${RPM_BUILD_ROOT}%{prefix}/%{gcc_target_platform}
-mv include/c++ ../include
-rm -fr include
-mv lib/* ../lib
-rm -fr lib
-###
-
 %clean
 rm -fr ${RPM_BUILD_ROOT}
 
 %pre
-###
-### Workaround for search path of gcc
-###
-if [ -d %{prefix}/ve-nec-linux/include ]; then
-  rm -fr %{prefix}/ve-nec-linux/include
-fi
-
-if [ -d %{prefix}/ve-nec-linux/lib ]; then
-  cd %{prefix}/ve-nec-linux/lib
-  rm -fr audit gcc gconv *crt*.o lib* ld-*.so*
-fi
-
-if [ -d %{prefix}/%{gcc_target_platform} ]; then
-  cd %{prefix}/%{gcc_target_platform}
-  rm -fr include lib
-fi
-###
 
 %files
 %defattr(-,root,root)
-%{prefix}/bin/c++
-%{prefix}/bin/cpp
-%{prefix}/bin/g++
-%{prefix}/bin/gcc
-%{prefix}/bin/gcc-ar
-%{prefix}/bin/gcc-nm
-%{prefix}/bin/gcc-ranlib
-%{prefix}/bin/gcov
-%{prefix}/bin/gcov-dump
-%{prefix}/bin/gcov-tool
-%{prefix}/bin/%{gcc_target_platform}-gcc-%{gcc_version}
+%{prefix}%{gccdir}/bin/%{program_prefix}c++
+%{prefix}%{gccdir}/bin/%{program_prefix}cpp
+%{prefix}%{gccdir}/bin/%{program_prefix}g++
+%{prefix}%{gccdir}/bin/%{program_prefix}gcc
+%{prefix}%{gccdir}/bin/%{program_prefix}gcc-ar
+%{prefix}%{gccdir}/bin/%{program_prefix}gcc-nm
+%{prefix}%{gccdir}/bin/%{program_prefix}gcc-ranlib
+%{prefix}%{gccdir}/bin/%{program_prefix}gcov
+%{prefix}%{gccdir}/bin/%{program_prefix}gcov-dump
+%{prefix}%{gccdir}/bin/%{program_prefix}gcov-tool
+%{prefix}%{gccdir}/bin/%{gcc_target_platform}-gcc-%{gcc_version}
 
-%dir %{prefix}/include/c++
-%{prefix}/include/c++/%{gcc_version}
+%dir %{prefix}%{gccdir}/lib/gcc
+%dir %{prefix}%{gccdir}/lib/gcc/%{gcc_target_platform}
+%dir %{prefix}%{gccdir}/lib/gcc/%{gcc_target_platform}/%{gcc_version}
+%{prefix}%{gccdir}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include
+%{prefix}%{gccdir}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/crt*.o
+%{prefix}%{gccdir}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libgcov.a
+%{prefix}%{gccdir}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/specs
 
-%{prefix}/lib/libsupc++.la
-%{prefix}/lib/libsupc++.a
-%{prefix}/lib/libstdc++fs.la
-%{prefix}/lib/libstdc++fs.a
-%{prefix}/lib/libstdc++.la
-%{prefix}/lib/libstdc++.a
-%{prefix}/lib/libstdc++.a-gdb.py*
-%{prefix}/lib/libssp.la
-%{prefix}/lib/libssp_nonshared.la
-%{prefix}/lib/libssp.a
-%{prefix}/lib/libssp_nonshared.a
-%{prefix}/lib/libgomp.spec
-%{prefix}/lib/libgomp.la
-%{prefix}/lib/libgomp.a
-%{prefix}/lib/libatomic.la
-%{prefix}/lib/libatomic.a
+%{prefix}%{gccdir}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include-fixed
+%{prefix}%{gccdir}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/install-tools
+%{prefix}%{gccdir}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/plugin
 
-%dir %{prefix}/lib/gcc
-%dir %{prefix}/lib/gcc/%{gcc_target_platform}
-%dir %{prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}
-%{prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include
-%{prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/crt*.o
-%{prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libgcov.a
-%{prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/specs
+%{prefix}%{gccdir}/lib64/libcc1.so*
+%{prefix}%{gccdir}/lib64/libcc1.la
+%{prefix}%{gccdir}/lib64/libcc1.a
 
-%{prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include-fixed
-%{prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/install-tools
-%{prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/plugin
-
-%{prefix}/lib64/libcc1.so*
-%{prefix}/lib64/libcc1.la
-%{prefix}/lib64/libcc1.a
-
-%{prefix}/libexec/gcc
-
-%dir %{prefix}/%{gcc_target_platform}
-
-%{prefix}/share/gcc-%{gcc_version}
+%{prefix}%{gccdir}/libexec/gcc
 
 %{infodir}/cpp.info
 %{infodir}/cppinternals.info
 %{infodir}/gcc.info
 %{infodir}/gccinstall.info
 %{infodir}/gccint.info
-%{infodir}/libgomp.info
 
-%{prefix}/share/locale/*/LC_MESSAGES/gcc.mo
-%{prefix}/share/locale/*/LC_MESSAGES/cpplib.mo
-%{prefix}/share/locale/*/LC_MESSAGES/libstdc++.mo
+%{prefix}%{gccdir}/share/locale/*/LC_MESSAGES/gcc.mo
+%{prefix}%{gccdir}/share/locale/*/LC_MESSAGES/cpplib.mo
 
-%{mandir}/man1/cpp.1
-%{mandir}/man1/g++.1
-%{mandir}/man1/gcc.1
-%{mandir}/man1/gcov.1
-%{mandir}/man1/gcov-dump.1
-%{mandir}/man1/gcov-tool.1
+%{mandir}/man1/%{program_prefix}cpp.1
+%{mandir}/man1/%{program_prefix}g++.1
+%{mandir}/man1/%{program_prefix}gcc.1
+%{mandir}/man1/%{program_prefix}gcov.1
+%{mandir}/man1/%{program_prefix}gcov-dump.1
+%{mandir}/man1/%{program_prefix}gcov-tool.1
 %{mandir}/man7/fsf-funding.7
 %{mandir}/man7/gfdl.7
 %{mandir}/man7/gpl.7
 
-%{_sysconfdir}/gcc
-
 %doc README README.md COPYING COPYING3 COPYING3.LIB COPYING.LIB COPYING.RUNTIME
 
-%files -n libgcc-ve1-static
-%{prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libgcc.a
+%files -n libgcc-ve3-static
+%{prefix}%{gccdir}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libgcc.a
+%{prefix}%{gccdir}/lib/gcc/libgcc.a
 %{prefix}/lib/gcc/libgcc.a
 
 %doc README README.md COPYING COPYING3 COPYING3.LIB COPYING.LIB COPYING.RUNTIME

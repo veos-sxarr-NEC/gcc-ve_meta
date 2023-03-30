@@ -38,7 +38,7 @@ if [ "$LIBC_TYPE" = "musl" ]; then
     LIBC_PATH=/opt/nec/ve/musl
     TARGET=ve-nec-linux-musl
 elif [ "$LIBC_TYPE" = "gnu" ]; then
-    LIBC_PATH=/opt/nec/ve
+    LIBC_PATH=/opt/nec/ve3
     TARGET=ve-nec-linux-gnu
 fi
 
@@ -67,5 +67,24 @@ AS_FOR_TARGET=$BINUTILS/nas \
  --enable-tls \
  --with-as=$BINUTILS/nas \
  --with-ld=$BINUTILS/nld \
- --program-prefix=""
+ --program-prefix="ve-" \
+                --disable-libgloss \
+                --disable-newlib \
+                --disable-libgomp \
+                --disable-libcilkrts \
+                --disable-liboffloadmic \
+                --disable-libhsail-rt \
+                --disable-libatomic \
+                --disable-libitm \
+                --disable-libstdc++-v3 \
+                --disable-libsanitizer \
+                --disable-libvtv \
+                --disable-libmpx \
+                --disable-libssp \
+                --disable-libquadmath \
+                --disable-libgfortran \
+                --disable-libffi \
+                --disable-libobjc \
+                --disable-libada \
+                --disable-libgo
 

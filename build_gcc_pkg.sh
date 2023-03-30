@@ -35,7 +35,7 @@ SOURCE_SDIR=${GCC_SDIR}/gcc_source
 SPEC=${META_SDIR}/gcc.spec
 META_TAR=gcc_meta-ve-${GCC_VER}.tar.bz2
 SOURCE_TAR=gcc_source-ve-${GCC_VER}.tar.bz2
-DOCDIR=/opt/nec/ve/share/doc
+DOCDIR=/opt/nec/ve3/share/doc
 
 if [ ! -d ${META_SDIR} ];then
 	echo ${META_SDIR}" meta dir is not found" 

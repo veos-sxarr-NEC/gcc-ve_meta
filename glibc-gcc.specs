@@ -1,17 +1,17 @@
 *gccve_include_path:
-%{!nostdinc:-isystem /opt/nec/ve/include}
+%{!nostdinc:-isystem /opt/nec/ve3/include}
 
 *gccve_lib_path:
-%{!nostdlib:-L/opt/nec/ve/lib}
+%{!nostdlib:-L/opt/nec/ve3/lib}
 
 *gccve_lib:
-%{!B:/opt/nec/ve/lib/}
+%{!B:/opt/nec/ve3/lib/}
 
 *gccve_dynamic_linker:
 %(gccve_lib)ld-linux-ve.so.1
 
 *asm:
-
+-march=ve3 -mabi=2
 
 *asm_debug:
 
@@ -62,7 +62,7 @@ cc1 -E %{traditional|traditional-cpp:-traditional-cpp}
 %{shared|pie:crtendS.o%s;:crtend.o%s} %(gccve_lib)crtn.o%s
 
 *link:
-  %{shared:-shared}   %{!shared:     %{!static:       %{rdynamic:-export-dynamic}       -dynamic-linker %(gccve_dynamic_linker)}     %{static:-static}}
+-m elf64ve3  %{shared:-shared}   %{!shared:     %{!static:       %{rdynamic:-export-dynamic}       -dynamic-linker %(gccve_dynamic_linker)}     %{static:-static}}
 
 *lib:
 %{pthread:-lpthread}    %{shared:-lc}    %{!shared:%{profile:-lc_p}%{!profile:-lc}}

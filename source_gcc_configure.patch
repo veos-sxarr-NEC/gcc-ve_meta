@@ -1,7 +1,25 @@
 diff --git a/configure b/configure
-index 32a3863..2ed2518 100755
+index 32a38633ad8..6b8cb978282 100755
 --- a/configure
 +++ b/configure
+@@ -6702,7 +6702,7 @@ fi
+ # CFLAGS_FOR_TARGET and CXXFLAGS_FOR_TARGET.
+ if test "x$CFLAGS_FOR_TARGET" = x; then
+   if test "x${is_cross_compiler}" = xyes; then
+-    CFLAGS_FOR_TARGET="-g -O2"
++    CFLAGS_FOR_TARGET="-g -O2 -Wa,-march=ve3,-mabi=2 -Wl,-m,elf64ve3"
+   else
+     CFLAGS_FOR_TARGET=$CFLAGS
+     case " $CFLAGS " in
+@@ -6719,7 +6719,7 @@ fi
+
+ if test "x$CXXFLAGS_FOR_TARGET" = x; then
+   if test "x${is_cross_compiler}" = xyes; then
+-    CXXFLAGS_FOR_TARGET="-g -O2"
++    CXXFLAGS_FOR_TARGET="-g -O2 -Wa,-march=ve3,-mabi=2 -Wl,-m,elf64ve3"
+   else
+     CXXFLAGS_FOR_TARGET=$CXXFLAGS
+     case " $CXXFLAGS " in
 @@ -6920,7 +6920,7 @@ esac
  
  # Some systems (e.g., one of the i386-aix systems the gas testers are
